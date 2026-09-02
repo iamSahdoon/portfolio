@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sabique Sahdoon — Full-Stack Developer</title>
+    <meta
+      name="description"
+      content="Full-stack developer based in Colombo, Sri Lanka. If you need a reliable developer to build your product, I'd love to help."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23B45309'/%3E%3Ctext x='32' y='42' font-size='28' font-family='monospace' font-weight='700' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E"
+    />
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var theme =
+            stored ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #18181b;
+        --fg-muted: #52525b;
+        --fg-subtle: #a1a1aa;
+        --border: #e4e4e7;
+        --accent: #b45309;
+        --accent-soft: #f59e0b;
+        --accent-underline: rgba(180, 83, 9, 0.35);
+        --pill-bg: #f4f4f5;
+        --pill-fg: #3f3f46;
+        --success-bg: #dcfce7;
+        --success-fg: #15803d;
+        --surface: #ffffff;
+        --shadow: 0 8px 24px rgba(24, 24, 27, 0.06);
+        --shadow-hover: 0 12px 28px rgba(24, 24, 27, 0.1);
+        --btn-primary-hover: #000000;
+        --radius: 14px;
+        --maxw: 660px;
+        color-scheme: light;
+      }
+
+      [data-theme="dark"] {
+        --bg: #23232c;
+        --fg: #f4f4f5;
+        --fg-muted: #a1a1aa;
+        --fg-subtle: #71717a;
+        --border: #27272a;
+        --accent: #f59e0b;
+        --accent-soft: #d97706;
+        --accent-underline: rgba(245, 158, 11, 0.4);
+        --pill-bg: #18181b;
+        --pill-fg: #d4d4d8;
+        --success-bg: #14532d;
+        --success-fg: #86efac;
+        --surface: #121214;
+        --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        --shadow-hover: 0 14px 32px rgba(0, 0, 0, 0.45);
+        --btn-primary-hover: #ffffff;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          ui-monospace, "SF Mono", "SFMono-Regular", "JetBrains Mono",
+          "Fira Code", "Cascadia Code", Consolas, "Liberation Mono", Menlo,
+          monospace;
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background-color 0.35s ease,
+          color 0.35s ease;
+      }
+      a {
+        color: inherit;
+      }
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      .wrap {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 28px 24px 80px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 28px;
+      }
+
+      .theme-toggle {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--fg);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          background-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+      }
+      .theme-toggle:active {
+        transform: translateY(0) scale(0.97);
+      }
+      .theme-toggle svg {
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        transition:
+          opacity 0.25s ease,
+          transform 0.35s ease;
+      }
+      .icon-sun {
+        opacity: 0;
+        transform: rotate(-45deg) scale(0.7);
+      }
+      .icon-moon {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+      }
+      [data-theme="dark"] .icon-sun {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+      }
+      [data-theme="dark"] .icon-moon {
+        opacity: 0;
+        transform: rotate(45deg) scale(0.7);
+      }
+
+      section {
+        margin-top: 56px;
+        animation: rise 0.55s ease both;
+      }
+      section:first-of-type {
+        margin-top: 0;
+      }
+      section:nth-of-type(1) {
+        animation-delay: 0.04s;
+      }
+      section:nth-of-type(2) {
+        animation-delay: 0.1s;
+      }
+      section:nth-of-type(3) {
+        animation-delay: 0.16s;
+      }
+      section:nth-of-type(4) {
+        animation-delay: 0.22s;
+      }
+      section:nth-of-type(5) {
+        animation-delay: 0.28s;
+      }
+      section:nth-of-type(6) {
+        animation-delay: 0.34s;
+      }
+      section:nth-of-type(7) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        font-size: 26px;
+        line-height: 1.35;
+        margin: 0 0 14px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      h1 a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-decoration-color: var(--accent-underline);
+        text-underline-offset: 3px;
+        transition: text-decoration-color 0.2s ease;
+      }
+      h1 a:hover {
+        text-decoration-color: var(--accent);
+      }
+
+      h2.eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--fg-subtle);
+        margin: 0 0 8px;
+      }
+
+      .lead {
+        color: var(--fg-muted);
+        font-size: 14.5px;
+        margin: 0 0 20px;
+      }
+
+      /* ---------- Hero ---------- */
+      .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent-soft), #c2410c);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 17px;
+        letter-spacing: 0.02em;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .avatar:hover {
+        transform: scale(1.04);
+        box-shadow: 0 6px 18px rgba(180, 83, 9, 0.28);
+      }
+      .tagline {
+        margin: 0 0 4px;
+        color: var(--fg);
+      }
+      .tagline .flag {
+        font-style: normal;
+      }
+      .specialize {
+        margin: 0 0 18px;
+        color: var(--fg);
+      }
+      .specialize .hl {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .cta-line {
+        color: var(--fg-muted);
+        margin: 0 0 22px;
+      }
+
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 16px 8px 8px;
+        border-radius: 999px;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid transparent;
+        font-family: inherit;
+        transition:
+          background-color 0.18s ease,
+          border-color 0.18s ease,
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+      .btn-primary {
+        background: var(--fg);
+        color: var(--bg);
+      }
+      .btn-primary:hover {
+        background: var(--btn-primary-hover);
+        box-shadow: var(--shadow);
+      }
+      .btn-primary .tile {
+        background: rgba(255, 255, 255, 0.2);
+        color: inherit;
+      }
+      [data-theme="dark"] .btn-primary .tile {
+        background: rgba(0, 0, 0, 0.12);
+      }
+      .btn-outline {
+        background: var(--surface);
+        color: var(--fg);
+        border-color: var(--border);
+      }
+      .btn-outline:hover {
+        border-color: var(--fg);
+        box-shadow: var(--shadow);
+      }
+      .btn-outline .tile {
+        background: var(--pill-bg);
+        color: var(--fg-muted);
+      }
+      .tile {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9.5px;
+        font-weight: 700;
+        flex: none;
+      }
+
+      .availability {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 13.5px;
+        color: var(--fg-muted);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        flex: none;
+        animation: pulse 2.4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+        50% {
+          box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.08);
+        }
+      }
+
+      /* ---------- Education ---------- */
+      .edu-item {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 28px;
+      }
+      .edu-item:last-child {
+        margin-bottom: 0;
+      }
+      .edu-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 0 rgba(180, 83, 9, 0);
+        transition: box-shadow 0.25s ease;
+      }
+      .edu-item:hover::before {
+        box-shadow: 0 0 0 4px var(--accent-underline);
+      }
+      .edu-school {
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .edu-dates {
+        display: block;
+        color: var(--fg-subtle);
+        font-size: 12.5px;
+        margin: 3px 0 10px;
+      }
+      .edu-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+      .edu-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px 16px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface);
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .edu-row:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+      }
+      .edu-degree {
+        font-size: 13.8px;
+        color: var(--fg);
+      }
+      .edu-result {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+
+      /* ---------- Tech stack ---------- */
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+        gap: 10px;
+      }
+      .tech-pill {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 13px;
+        background: var(--surface);
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .tech-pill:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+      .mono {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9.5px;
+        font-weight: 700;
+        flex: none;
+        transition: transform 0.2s ease;
+      }
+      .tech-pill:hover .mono {
+        transform: scale(1.08);
+      }
+
+      /* ---------- Work experience ---------- */
+      .exp-item {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 34px;
+      }
+      .exp-item:last-child {
+        margin-bottom: 0;
+      }
+      .exp-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 7px;
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--accent);
+        transition: box-shadow 0.25s ease;
+      }
+      .exp-item:hover::before {
+        box-shadow: 0 0 0 4px var(--accent-underline);
+      }
+      .exp-company {
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .exp-company a {
+        text-decoration: underline;
+        text-decoration-color: var(--border);
+        transition: text-decoration-color 0.2s ease;
+      }
+      .exp-company a:hover {
+        text-decoration-color: var(--accent);
+      }
+      .exp-role {
+        display: block;
+        color: var(--fg-muted);
+        font-size: 13px;
+        margin: 3px 0 10px;
+      }
+      .exp-desc {
+        color: var(--fg-muted);
+        font-size: 14px;
+        margin: 0 0 10px;
+      }
+      .exp-bullets {
+        margin: 0 0 12px;
+        padding-left: 18px;
+        font-size: 13.8px;
+        line-height: 1.65;
+      }
+      .exp-bullets li {
+        margin-bottom: 4px;
+      }
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .tag {
+        font-size: 11.5px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--pill-bg);
+        color: var(--pill-fg);
+        transition:
+          transform 0.18s ease,
+          background-color 0.18s ease;
+      }
+      .tag:hover {
+        transform: translateY(-1px);
+      }
+
+      /* ---------- Projects ---------- */
+      .project-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .project-card {
+        display: block;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        text-decoration: none;
+        color: inherit;
+        background: var(--surface);
+        transition:
+          border-color 0.22s ease,
+          transform 0.22s ease,
+          box-shadow 0.22s ease;
+      }
+      .project-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+      }
+      .project-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        transition: transform 0.22s ease;
+      }
+      .project-card:hover .project-icon {
+        transform: scale(1.06) rotate(-3deg);
+      }
+      .project-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+      .project-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .project-title {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .status {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        padding: 2px 8px;
+        border-radius: 999px;
+      }
+      .status-live {
+        background: var(--success-bg);
+        color: var(--success-fg);
+      }
+      .status-neutral {
+        background: var(--pill-bg);
+        color: var(--pill-fg);
+      }
+      .project-desc {
+        font-size: 13px;
+        color: var(--fg-muted);
+        line-height: 1.55;
+        margin: 0;
+      }
+
+      /* ---------- Find me on ---------- */
+      .social-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .social-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        text-decoration: none;
+        color: var(--fg);
+        font-size: 13.5px;
+        font-weight: 600;
+        background: var(--surface);
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .social-pill:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      /* ---------- Get in touch ---------- */
+      .touch p {
+        margin: 0 0 6px;
+        color: var(--fg);
+        font-size: 14.5px;
+      }
+      .touch a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-decoration-color: var(--accent-underline);
+        transition: text-decoration-color 0.2s ease;
+      }
+      .touch a:hover {
+        text-decoration-color: var(--accent);
+      }
+
+      footer {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 24px 48px;
+        color: var(--fg-subtle);
+        font-size: 12px;
+      }
+      footer a {
+        color: var(--fg-subtle);
+        text-decoration: underline;
+      }
+
+      @media (max-width: 560px) {
+        .wrap {
+          padding: 20px 20px 64px;
+        }
+        .project-grid {
+          grid-template-columns: 1fr;
+        }
+        h1 {
+          font-size: 23px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <button
+          type="button"
+          class="theme-toggle"
+          id="theme-toggle"
+          aria-label="Switch to dark mode"
+        >
+          <svg
+            class="icon-sun"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 3v1.5M12 19.5V21M4.2 4.2l1.1 1.1M18.7 18.7l1.1 1.1M3 12h1.5M19.5 12H21M4.2 19.8l1.1-1.1M18.7 5.3l1.1-1.1"
+            />
+          </svg>
+          <svg
+            class="icon-moon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20 14.5A8.2 8.2 0 1110.5 4 6.5 6.5 0 0020 14.5z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- ================= HERO ================= -->
+      <section aria-label="Introduction">
+        <div class="avatar" aria-hidden="true">SS</div>
+
+        <h1>
+          Hey, I'm
+          <a
+            href="https://www.linkedin.com/in/sabique-sahdoon99/"
+            target="_blank"
+            rel="noopener"
+            >Sabique Sahdoon</a
+          >!
+        </h1>
+
+        <p class="tagline">
+          Full-Stack Developer based in Colombo, Sri Lanka
+          <span class="flag">🇱🇰</span>
+        </p>
+        <p class="specialize">
+          I specialize in building full-stack web apps —
+          <span class="hl">React</span> &amp; <span class="hl">Next.js</span> on
+          the front end, <span class="hl">Node.js</span> &amp;
+          <span class="hl">Spring Boot</span> underneath.
+        </p>
+
+        <p class="cta-line">
+          If you're looking for a dependable developer to help build your
+          product, I'd love to help.
+        </p>
+
+        <div class="btn-row">
+          <a
+            class="btn btn-primary"
+            href="Sabique_Sahdoon_CV.pdf"
+            download="Sabique_Sahdoon_CV.pdf"
+          >
+            <span class="tile" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                width="12"
+                height="12"
+              >
+                <path
+                  d="M12 4v11m0 0l-4-4m4 4l4-4M5 18v1a2 2 0 002 2h10a2 2 0 002-2v-1"
+                />
+              </svg>
+            </span>
+            Download CV
+          </a>
+          <a class="btn btn-outline" href="mailto:sabiques1@gmail.com">
+            <span class="tile" aria-hidden="true">E</span>
+            Send an email
+          </a>
+        </div>
+
+        <div class="availability">
+          <span class="dot" aria-hidden="true"></span>
+          Open to new opportunities, let's talk!
+        </div>
+      </section>
+
+      <!-- ================= EDUCATION ================= -->
+      <section aria-labelledby="edu-heading">
+        <h2 class="eyebrow" id="edu-heading">Education</h2>
+        <p class="lead">Formal training behind the work:</p>
+
+        <div class="edu-item">
+          <div class="edu-school">
+            University of Bedfordshire (SLIIT City Uni)
+          </div>
+          <span class="edu-dates">September 2024 – September 2025</span>
+          <ul class="edu-list">
+            <li class="edu-row">
+              <span class="edu-degree">BSc (Hons) in Software Engineering</span>
+              <span class="edu-result">2nd Class Upper Division</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-school">
+            National Institute of Business Management (NIBM)
+          </div>
+          <span class="edu-dates">August 2021 – August 2024</span>
+          <ul class="edu-list">
+            <li class="edu-row">
+              <span class="edu-degree">Diploma in Software Engineering</span>
+              <span class="edu-result">GPA 3.95</span>
+            </li>
+            <li class="edu-row">
+              <span class="edu-degree"
+                >Higher National Diploma in Software Engineering</span
+              >
+              <span class="edu-result">GPA 3.89</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= TECH STACK ================= -->
+      <section aria-labelledby="tech-heading">
+        <h2 class="eyebrow" id="tech-heading">Tech stack</h2>
+        <p class="lead">
+          The tech stack I use for my projects and internships:
+        </p>
+        <div class="tech-grid">
+          <span class="tech-pill"
+            ><span class="mono" style="background: #e0f6fe; color: #0e7490"
+              >⚛</span
+            >React</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #ededed; color: #171717"
+              >Nx</span
+            >Next.js</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #dbeafe; color: #1d4ed8"
+              >TS</span
+            >TypeScript</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #fef3c7; color: #92400e"
+              >JS</span
+            >JavaScript</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #dcfce7; color: #15803d"
+              >No</span
+            >Node.js</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #f4f4f5; color: #3f3f46"
+              >Ex</span
+            >Express.js</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #fee2e2; color: #b91c1c"
+              >Ja</span
+            >Java</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #dcfce7; color: #166534"
+              >Sp</span
+            >Spring Boot</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #ccfbf1; color: #0f766e"
+              >Tw</span
+            >Tailwind CSS</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #dbeafe; color: #1e40af"
+              >Ba</span
+            >Ballerina</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #e0e7ff; color: #3730a3"
+              >My</span
+            >MySQL</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #dcfce7; color: #15803d"
+              >Mo</span
+            >MongoDB</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #fef3c7; color: #a16207"
+              >Fb</span
+            >Firebase</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #dbeafe; color: #1d4ed8"
+              >Cl</span
+            >Cloudinary</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #ffedd5; color: #c2410c"
+              >Gt</span
+            >Git</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #f4f4f5; color: #18181b"
+              >Gh</span
+            >GitHub</span
+          >
+          <span class="tech-pill"
+            ><span class="mono" style="background: #fae8ff; color: #a21caf"
+              >Fg</span
+            >Figma</span
+          >
+        </div>
+      </section>
+
+      <!-- ================= WORK EXPERIENCE ================= -->
+      <section aria-labelledby="exp-heading">
+        <h2 class="eyebrow" id="exp-heading">Work Experience</h2>
+        <p class="lead">My professional journey so far:</p>
+
+        <div class="exp-item">
+          <div class="exp-company">
+            <a href="https://wso2.com/" target="_blank" rel="noopener">WSO2</a>
+          </div>
+          <span class="exp-role"
+            >Software Engineering Intern • Aug 2025 – Feb 2026</span
+          >
+          <p class="exp-desc">
+            WSO2 builds open-source software for API management, identity, and
+            integration used by enterprises worldwide.
+          </p>
+          <ul class="exp-bullets">
+            <li>
+              Contributed to the open-source WSO2 Open Banking Toolkit Template,
+              engineering the core framework and shared logic used to
+              standardize regional banking toolkits.
+            </li>
+            <li>
+              Developed a suite of Ballerina connectors for Temenos Transact
+              (Transactions, Cards, Holdings, etc.), with comprehensive unit
+              testing.
+            </li>
+            <li>
+              Debugged and resolved integration issues across cross-functional
+              teams to keep code quality and architecture aligned.
+            </li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Ballerina</span
+            ><span class="tag">WSO2 Identity Server</span
+            ><span class="tag">REST APIs</span><span class="tag">Agile</span
+            ><span class="tag">Unit Testing</span>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-company">
+            <a href="https://www.seu.ac.lk/" target="_blank" rel="noopener"
+              >South Eastern University of Sri Lanka</a
+            >
+          </div>
+          <span class="exp-role"
+            >Software Engineering Trainee • Apr 2024 – Oct 2024</span
+          >
+          <p class="exp-desc">
+            SEUSL is a public university based in Oluvil, Sri Lanka.
+          </p>
+          <ul class="exp-bullets">
+            <li>
+              Developed responsive, mobile-first page layouts and UI/UX for the
+              university's public-facing website, improving navigation flow and
+              cross-device consistency.
+            </li>
+            <li>
+              Ensured cross-browser compatibility across Chrome, Firefox, and
+              Safari, and improved page load speed.
+            </li>
+            <li>
+              Implemented SEO best practices that boosted the university's
+              online visibility for prospective students and staff.
+            </li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">HTML</span><span class="tag">CSS</span
+            ><span class="tag">JavaScript</span><span class="tag">SEO</span
+            ><span class="tag">Cross-Browser Testing</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PERSONAL PROJECTS ================= -->
+      <section aria-labelledby="proj-heading">
+        <h2 class="eyebrow" id="proj-heading">Personal Projects</h2>
+        <p class="lead">Projects I've designed and built, end to end:</p>
+
+        <div class="project-grid">
+          <a
+            class="project-card"
+            href="https://github.com/iamSahdoon/CraftedNear"
+            target="_blank"
+            rel="noopener"
+          >
+            <div
+              class="project-icon"
+              style="background: #dcfce7; color: #15803d"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M6 7h12l1 13H5L6 7z" />
+                <path d="M9 7a3 3 0 016 0" />
+              </svg>
+            </div>
+            <div class="project-title-row">
+              <span class="project-title">CraftedNear</span>
+              <span class="status status-neutral">Completed</span>
+            </div>
+            <p class="project-desc">
+              MERN marketplace connecting customers with nearby sellers and
+              their own storefronts.
+            </p>
+          </a>
+
+          <a
+            class="project-card"
+            href="https://banana-rush-retro.vercel.app/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div
+              class="project-icon"
+              style="background: #fef3c7; color: #a16207"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="8" width="20" height="9" rx="4" />
+                <path d="M7 10.5v4M5 12.5h4" />
+                <circle cx="16" cy="11.3" r="1" />
+                <circle cx="18.5" cy="13.8" r="1" />
+              </svg>
+            </div>
+            <div class="project-title-row">
+              <span class="project-title">Banana Rush</span>
+              <span class="status status-live">Live</span>
+            </div>
+            <p class="project-desc">
+              Retro quiz game with Asgardeo auth and real-time Firestore
+              leaderboards.
+            </p>
+          </a>
+
+          <a
+            class="project-card"
+            href="https://github.com/iamSahdoon/CraftsOfCeylon"
+            target="_blank"
+            rel="noopener"
+          >
+            <div
+              class="project-icon"
+              style="background: #fae8ff; color: #a21caf"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 10h16l-2 9H6l-2-9z" />
+                <path d="M8 10a4 4 0 018 0" />
+              </svg>
+            </div>
+            <div class="project-title-row">
+              <span class="project-title">Craft of Ceylon</span>
+              <span class="status status-neutral">Completed</span>
+            </div>
+            <p class="project-desc">
+              Figma-designed marketplace for local artisans, React front end on
+              a Spring Boot backend.
+            </p>
+          </a>
+
+          <a
+            class="project-card"
+            href="https://github.com/iamSahdoon/Apperal-Production-Management-System-Hameedia-pvt-Ltd"
+            target="_blank"
+            rel="noopener"
+          >
+            <div
+              class="project-icon"
+              style="background: #f4f4f5; color: #3f3f46"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M12 3v2.5M12 18.5V21M4.2 4.2l1.8 1.8M17.9 17.9l1.9 1.9M3 12h2.5M18.5 12H21M4.2 19.8l1.8-1.8M17.9 6.1l1.9-1.9"
+                />
+              </svg>
+            </div>
+            <div class="project-title-row">
+              <span class="project-title">Production Process Automation</span>
+              <span class="status status-neutral">Case Study</span>
+            </div>
+            <p class="project-desc">
+              On-site systems analysis and SDD for automating Hameedia's apparel
+              production tracking.
+            </p>
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= FIND ME ON ================= -->
+      <section aria-labelledby="social-heading">
+        <h2 class="eyebrow" id="social-heading">Find me on</h2>
+        <p class="lead">You can find me on the following platforms:</p>
+        <div class="social-row">
+          <a
+            class="social-pill"
+            href="https://github.com/iamSahdoon"
+            target="_blank"
+            rel="noopener"
+          >
+            <span
+              class="tile"
+              style="background: var(--pill-bg); color: var(--fg)"
+              aria-hidden="true"
+              >Gh</span
+            >GitHub
+          </a>
+          <a
+            class="social-pill"
+            href="https://www.linkedin.com/in/sabique-sahdoon99/"
+            target="_blank"
+            rel="noopener"
+          >
+            <span
+              class="tile"
+              style="background: var(--pill-bg); color: var(--fg)"
+              aria-hidden="true"
+              >in</span
+            >LinkedIn
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= GET IN TOUCH ================= -->
+      <section class="touch" aria-labelledby="touch-heading">
+        <h2 class="eyebrow" id="touch-heading">Get in touch</h2>
+        <p>
+          You can reach me anytime at
+          <a href="mailto:sabiques1@gmail.com">sabiques1@gmail.com</a>.
+        </p>
+        <p>
+          Or take a look at my code on
+          <a href="https://github.com/iamSahdoon" target="_blank" rel="noopener"
+            >GitHub</a
+          >.
+        </p>
+      </section>
+    </div>
+
+    <footer>© 2026 Sabique Sahdoon</footer>
+
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var toggle = document.getElementById("theme-toggle");
+
+        function currentTheme() {
+          return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+        }
+
+        function applyTheme(theme) {
+          root.setAttribute("data-theme", theme);
+          try {
+            localStorage.setItem("theme", theme);
+          } catch (e) {}
+          toggle.setAttribute(
+            "aria-label",
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+          );
+        }
+
+        applyTheme(currentTheme());
+
+        toggle.addEventListener("click", function () {
+          applyTheme(currentTheme() === "dark" ? "light" : "dark");
+        });
+      })();
+    </script>
+  </body>
+</html>
