@@ -29,7 +29,7 @@
     </script>
     <style>
       :root {
-        --bg: #ffffff;
+        --bg: #fdfdfd;
         --fg: #18181b;
         --fg-muted: #52525b;
         --fg-subtle: #a1a1aa;
@@ -264,17 +264,12 @@
 
       /* ---------- Hero ---------- */
       .avatar {
-        width: 56px;
-        height: 56px;
+        width: 64px;
+        height: 64px;
         border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent-soft), #c2410c);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 17px;
-        letter-spacing: 0.02em;
+        object-fit: cover;
+        object-position: center 18%;
+        display: block;
         margin-bottom: 20px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         transition:
@@ -798,7 +793,13 @@
 
       <!-- ================= HERO ================= -->
       <section aria-label="Introduction">
-        <div class="avatar" aria-hidden="true">SS</div>
+        <img
+          class="avatar"
+          src="profile.jpg"
+          alt="Sabique Sahdoon"
+          width="64"
+          height="64"
+        />
 
         <h1>
           Hey, I'm
