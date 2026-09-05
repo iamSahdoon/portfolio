@@ -213,6 +213,9 @@
       section:nth-of-type(7) {
         animation-delay: 0.4s;
       }
+      section:nth-of-type(8) {
+        animation-delay: 0.46s;
+      }
 
       @keyframes rise {
         from {
@@ -681,6 +684,54 @@
         margin-top: 12px;
       }
 
+      /* ---------- Blog posts ---------- */
+      .blog-list {
+        display: grid;
+        gap: 10px;
+      }
+      .blog-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: inherit;
+        background: var(--surface);
+        transition:
+          border-color 0.22s ease,
+          transform 0.22s ease,
+          box-shadow 0.22s ease;
+      }
+      .blog-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+      .blog-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 4px;
+      }
+      .blog-meta {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--fg-subtle);
+      }
+      .blog-arrow {
+        color: var(--fg-subtle);
+        flex: none;
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+      .blog-card:hover .blog-arrow {
+        color: var(--accent);
+        transform: translateX(3px);
+      }
+
       /* ---------- Find me on ---------- */
       .social-row {
         display: flex;
@@ -874,44 +925,6 @@
         </div>
       </section>
 
-      <!-- ================= EDUCATION ================= -->
-      <section aria-labelledby="edu-heading">
-        <h2 id="edu-heading">Education</h2>
-        <p class="lead">Formal training behind the work:</p>
-
-        <div class="edu-item">
-          <h3 class="edu-school">
-            University of Bedfordshire (SLIIT City Uni)
-          </h3>
-          <span class="edu-dates">September 2024 – September 2025</span>
-          <ul class="edu-list">
-            <li class="edu-row">
-              <span class="edu-degree">BSc (Hons) in Software Engineering</span>
-              <span class="edu-result">2nd Class Upper Division</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="edu-item">
-          <h3 class="edu-school">
-            National Institute of Business Management (NIBM)
-          </h3>
-          <span class="edu-dates">August 2021 – August 2024</span>
-          <ul class="edu-list">
-            <li class="edu-row">
-              <span class="edu-degree">Diploma in Software Engineering</span>
-              <span class="edu-result">GPA 3.95</span>
-            </li>
-            <li class="edu-row">
-              <span class="edu-degree"
-                >Higher National Diploma in Software Engineering</span
-              >
-              <span class="edu-result">GPA 3.89</span>
-            </li>
-          </ul>
-        </div>
-      </section>
-
       <!-- ================= TECH STACK ================= -->
       <section aria-labelledby="tech-heading">
         <h2 id="tech-heading">Tech stack</h2>
@@ -988,16 +1001,6 @@
             ><span class="mono" style="background: #dbeafe; color: #1d4ed8"
               >Cl</span
             >Cloudinary</span
-          >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #ffedd5; color: #c2410c"
-              >Gt</span
-            >Git</span
-          >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #f4f4f5; color: #18181b"
-              >Gh</span
-            >GitHub</span
           >
           <span class="tech-pill"
             ><span class="mono" style="background: #fae8ff; color: #a21caf"
@@ -1080,6 +1083,44 @@
             ><span class="tag">SEO</span
             ><span class="tag">Cross-Browser Testing</span>
           </div>
+        </div>
+      </section>
+
+      <!-- ================= EDUCATION ================= -->
+      <section aria-labelledby="edu-heading">
+        <h2 id="edu-heading">Education</h2>
+        <p class="lead">Formal training behind the work:</p>
+
+        <div class="edu-item">
+          <h3 class="edu-school">
+            University of Bedfordshire (SLIIT City Uni)
+          </h3>
+          <span class="edu-dates">September 2024 – September 2025</span>
+          <ul class="edu-list">
+            <li class="edu-row">
+              <span class="edu-degree">BSc (Hons) in Software Engineering</span>
+              <span class="edu-result">2nd Class Upper Division</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="edu-item">
+          <h3 class="edu-school">
+            National Institute of Business Management (NIBM)
+          </h3>
+          <span class="edu-dates">August 2021 – August 2024</span>
+          <ul class="edu-list">
+            <li class="edu-row">
+              <span class="edu-degree">Diploma in Software Engineering</span>
+              <span class="edu-result">GPA 3.95</span>
+            </li>
+            <li class="edu-row">
+              <span class="edu-degree"
+                >Higher National Diploma in Software Engineering</span
+              >
+              <span class="edu-result">GPA 3.89</span>
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -1280,6 +1321,93 @@
               ><span class="tag">Android Studio</span
               ><span class="tag">OpenWeather API</span>
             </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= BLOG POSTS ================= -->
+      <section aria-labelledby="blog-heading">
+        <h2 id="blog-heading">Blog Posts</h2>
+        <p class="lead">Articles I've written on identity and open banking:</p>
+        <div class="blog-list">
+          <a
+            class="blog-card"
+            href="https://medium.com/@sabiques1/integrating-asgardeo-in-a-react-application-for-simplified-authentication-and-identity-management-631e0d6e68ff?sharedUserId=sabiques1"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="blog-title">
+                Integrating Asgardeo in a React Application
+              </h3>
+              <span class="blog-meta">Medium</span>
+            </div>
+            <svg
+              class="blog-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+          <a
+            class="blog-card"
+            href="https://medium.com/@sabiques1/streamlining-fintech-partnerships-using-wso2-open-banking-for-seamless-tpp-integration-b71fda4b7d54?sharedUserId=sabiques1"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="blog-title">WSO2 Open Banking for TPP Integration</h3>
+              <span class="blog-meta">Medium</span>
+            </div>
+            <svg
+              class="blog-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+          <a
+            class="blog-card"
+            href="https://medium.com/@sabiques1/demystifying-open-banking-how-wso2-unites-customers-banks-and-fintech-5dba8959ead2?sharedUserId=sabiques1"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="blog-title">
+                Understanding Open Banking: WSO2's Solution
+              </h3>
+              <span class="blog-meta">Medium</span>
+            </div>
+            <svg
+              class="blog-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
           </a>
         </div>
       </section>
