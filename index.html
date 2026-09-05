@@ -487,20 +487,22 @@
 
       /* ---------- Tech stack ---------- */
       .tech-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-        gap: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
       }
       .tech-pill {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 9px;
-        padding: 8px 12px;
+        gap: 7px;
+        padding: 5px 10px 5px 7px;
         border: 1px solid var(--border);
         border-radius: 999px;
-        font-size: 13px;
+        font-size: 12.5px;
         font-weight: 500;
-        background: var(--surface);
+        line-height: 1;
+        background: var(--pill-bg);
+        white-space: nowrap;
         transition:
           border-color 0.2s ease,
           transform 0.2s ease,
@@ -508,23 +510,20 @@
       }
       .tech-pill:hover {
         border-color: var(--accent);
-        transform: translateY(-2px);
+        transform: translateY(-1px);
         box-shadow: var(--shadow);
       }
-      .mono {
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 9.5px;
-        font-weight: 700;
+      .tech-logo {
+        width: 15px;
+        height: 15px;
         flex: none;
-        transition: transform 0.2s ease;
+        display: block;
       }
-      .tech-pill:hover .mono {
-        transform: scale(1.08);
+      [data-theme="dark"] .tech-logo.invert {
+        filter: invert(1);
+      }
+      .tech-pill-text {
+        padding-left: 10px;
       }
 
       /* ---------- Work experience ---------- */
@@ -932,80 +931,132 @@
           The tech stack I use for my projects and internships:
         </p>
         <div class="tech-grid">
-          <span class="tech-pill"
-            ><span class="mono" style="background: #e0f6fe; color: #0e7490"
-              >⚛</span
-            >React</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/react/61DAFB"
+              alt=""
+              width="15"
+              height="15"
+            />React</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #ededed; color: #171717"
-              >Nx</span
-            >Next.js</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo invert"
+              src="https://cdn.simpleicons.org/nextdotjs/000000"
+              alt=""
+              width="15"
+              height="15"
+            />Next.js</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #dbeafe; color: #1d4ed8"
-              >TS</span
-            >TypeScript</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/typescript/3178C6"
+              alt=""
+              width="15"
+              height="15"
+            />TypeScript</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #fef3c7; color: #92400e"
-              >JS</span
-            >JavaScript</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/javascript/F7DF1E"
+              alt=""
+              width="15"
+              height="15"
+            />JavaScript</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #dcfce7; color: #15803d"
-              >No</span
-            >Node.js</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/nodedotjs/5FA04E"
+              alt=""
+              width="15"
+              height="15"
+            />Node.js</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #f4f4f5; color: #3f3f46"
-              >Ex</span
-            >Express.js</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo invert"
+              src="https://cdn.simpleicons.org/express/000000"
+              alt=""
+              width="15"
+              height="15"
+            />Express.js</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #fee2e2; color: #b91c1c"
-              >Ja</span
-            >Java</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"
+              alt=""
+              width="15"
+              height="15"
+            />Java</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #dcfce7; color: #166534"
-              >Sp</span
-            >Spring Boot</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/springboot/6DB33F"
+              alt=""
+              width="15"
+              height="15"
+            />Spring Boot</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #ccfbf1; color: #0f766e"
-              >Tw</span
-            >Tailwind CSS</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/tailwindcss/06B6D4"
+              alt=""
+              width="15"
+              height="15"
+            />Tailwind CSS</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #dbeafe; color: #1e40af"
-              >Ba</span
-            >Ballerina</span
+          <span class="tech-pill tech-pill-text">Ballerina</span>
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/mysql/4479A1"
+              alt=""
+              width="15"
+              height="15"
+            />MySQL</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #e0e7ff; color: #3730a3"
-              >My</span
-            >MySQL</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/mongodb/47A248"
+              alt=""
+              width="15"
+              height="15"
+            />MongoDB</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #dcfce7; color: #15803d"
-              >Mo</span
-            >MongoDB</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/firebase/FFCA28"
+              alt=""
+              width="15"
+              height="15"
+            />Firebase</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #fef3c7; color: #a16207"
-              >Fb</span
-            >Firebase</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/cloudinary/3448C5"
+              alt=""
+              width="15"
+              height="15"
+            />Cloudinary</span
           >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #dbeafe; color: #1d4ed8"
-              >Cl</span
-            >Cloudinary</span
-          >
-          <span class="tech-pill"
-            ><span class="mono" style="background: #fae8ff; color: #a21caf"
-              >Fg</span
-            >Figma</span
+          <span class="tech-pill">
+            <img
+              class="tech-logo"
+              src="https://cdn.simpleicons.org/figma/F24E1E"
+              alt=""
+              width="15"
+              height="15"
+            />Figma</span
           >
         </div>
       </section>
