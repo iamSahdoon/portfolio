@@ -225,6 +225,9 @@
       section:nth-of-type(8) {
         animation-delay: 0.46s;
       }
+      section:nth-of-type(9) {
+        animation-delay: 0.52s;
+      }
 
       @keyframes rise {
         from {
@@ -782,6 +785,55 @@
           transform 0.2s ease;
       }
       .blog-card:hover .blog-arrow {
+        color: var(--accent);
+        transform: translateX(3px);
+      }
+
+      /* ---------- Certifications ---------- */
+      .cert-list {
+        display: grid;
+        gap: 10px;
+      }
+      .cert-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: inherit;
+        background: var(--surface);
+        transition:
+          border-color 0.22s ease,
+          transform 0.22s ease,
+          box-shadow 0.22s ease;
+      }
+      .cert-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+      .cert-title {
+        color: var(--fg-muted);
+        font-size: 13px;
+        font-weight: 400;
+        margin: 0 0 4px;
+      }
+      .cert-meta {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--fg-subtle);
+      }
+      .cert-arrow {
+        color: var(--fg-subtle);
+        flex: none;
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+      .cert-card:hover .cert-arrow {
         color: var(--accent);
         transform: translateX(3px);
       }
@@ -1460,6 +1512,114 @@
               ><span class="tag">Android Studio</span
               ><span class="tag">OpenWeather API</span>
             </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= CERTIFICATIONS ================= -->
+      <section aria-labelledby="cert-heading">
+        <h2 id="cert-heading">Certifications</h2>
+        <p class="lead">Courses and credentials I've completed:</p>
+        <div class="cert-list">
+          <a
+            class="cert-card"
+            href="https://www.simplilearn.com/skillup-certificate-landing?token=eyJjb3Vyc2VfaWQiOiI0MTg0IiwiY2VydGlmaWNhdGVfdXJsIjoiaHR0cHM6XC9cL2NlcnRpZmljYXRlcy5zaW1wbGljZG4ubmV0XC9zaGFyZVwvMTA2OTU3MjVfMTEwNTA0OTBfMTc4ODYyMDA2MzY3Mi5wbmciLCJ1c2VybmFtZSI6Ik1vaGFtZWQgU2FiaXF1ZSBTYWhkb29uIn0%3D&amp;utm_source=shared-certificate&amp;utm_medium=lms&amp;utm_campaign=shared-certificate-promotion&amp;referrer=https%3A%2F%2Flms.simplilearn.com%2Fcourses%2F7118%2FIntroduction-to-ITIL%25C2%25AE-V4%2Fcertificate%2Fdownload-skillup&amp;%24web_only=true&amp;_branch_match_id=1587362097514817606&amp;_branch_referrer=H4sIAAAAAAAAA8soKSkottLXL87MLcjJ1EssKNDLyczL1k%2FVd6kqdy40cvFOMkuyrytKTUstKsrMS49PKsovL04tsvUBqkpN8cwDADefufJBAAAA"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="cert-title">Introduction to ITIL&reg; V4</h3>
+              <span class="cert-meta">Credential ID 10695725</span>
+            </div>
+            <svg
+              class="cert-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+          <a
+            class="cert-card"
+            href="https://www.sololearn.com/en/certificates/CC-VSIY9JL3"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="cert-title">Introduction to SQL</h3>
+              <span class="cert-meta">Credential ID CC-VSlY9JL3</span>
+            </div>
+            <svg
+              class="cert-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+          <a
+            class="cert-card"
+            href="https://www.guvi.in/verify-certificate?id=9B5fO948y61N91Cl00&amp;course=pygame_english"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="cert-title">Game Development using PyGame</h3>
+              <span class="cert-meta">Credential ID 9B5fO948y61N91Cl00</span>
+            </div>
+            <svg
+              class="cert-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
+          </a>
+          <a
+            class="cert-card"
+            href="https://drive.google.com/file/d/1XtObvoch0GSkSAKSmyIv-SkraTsV9bFm/view"
+            target="_blank"
+            rel="noopener"
+          >
+            <div>
+              <h3 class="cert-title">Python for Beginners</h3>
+              <span class="cert-meta">Credential ID tfq6Q67ntd</span>
+            </div>
+            <svg
+              class="cert-arrow"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <path d="M7 17L17 7M9 7h8v8" />
+            </svg>
           </a>
         </div>
       </section>
