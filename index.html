@@ -898,6 +898,21 @@
         text-decoration: underline;
       }
 
+      /* ---------- Ambient weather ---------- */
+      #sky {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+      }
+      @media print {
+        #sky {
+          display: none;
+        }
+      }
+
       @media (max-width: 560px) {
         .wrap {
           padding: 55px 20px 64px;
@@ -921,6 +936,7 @@
     </style>
   </head>
   <body>
+    <canvas id="sky" aria-hidden="true"></canvas>
     <div class="wrap">
       <!-- ================= HERO ================= -->
       <section aria-label="Introduction">
@@ -1855,6 +1871,456 @@
         toggle.addEventListener("click", function () {
           applyTheme(currentTheme() === "dark" ? "light" : "dark");
         });
+      })();
+    </script>
+
+    <script>
+      /* Ambient weather behind the page. Light mode: warm sunlight from the
+         top-left, dappled by the soft shadow of a leafy branch swaying in the
+         wind, with dust drifting through the light. Dark mode: wind-driven rain
+         with distant sheet lightning. Both share one westerly wind whose gusts
+         roll across the screen from left to right. */
+      (function () {
+        var canvas = document.getElementById("sky");
+        var ctx = canvas && canvas.getContext && canvas.getContext("2d");
+        if (!ctx) return;
+
+        var root = document.documentElement;
+        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        // Leaf shadows are drawn small, blurred, then scaled up: cheap and soft.
+        var buffer = document.createElement("canvas");
+        var bctx = buffer.getContext("2d");
+        var blurred = document.createElement("canvas");
+        var blctx = blurred.getContext("2d");
+        var canBlur = "filter" in blctx;
+
+        var TAU = Math.PI * 2;
+        var GUST_SPEED = 520; // px/s a gust front travels across the page
+        var BUFFER_SCALE = 0.25;
+        var SHADOW_ALPHA = 0.085;
+        var RAIN_ALPHA = [0.08, 0.13, 0.2];
+        var RAIN_WIDTH = [0.7, 0.9, 1.2];
+        var FLASH_PEAK = 0.14;
+
+        var w = 0;
+        var h = 0;
+        var sun = { x: 0, y: 0, reach: 0 };
+        var branch = { x: 0, y: 0, size: 0, angle: 0.58 };
+        var motes = [];
+        var drops = [];
+        var scenes = {
+          light: { level: 0, reveal: 0 },
+          dark: { level: 0, reveal: 0 },
+        };
+        var strike = { next: Infinity, x: 0, pulses: [] };
+        var theme = currentTheme();
+        var clock = 0;
+        var last = 0;
+        var raf = 0;
+
+        function currentTheme() {
+          return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+        }
+        function rand(a, b) {
+          return a + Math.random() * (b - a);
+        }
+        function clamp01(v) {
+          return v < 0 ? 0 : v > 1 ? 1 : v;
+        }
+        function smooth(v) {
+          v = clamp01(v);
+          return v * v * (3 - 2 * v);
+        }
+        function easeOut(v) {
+          v = 1 - clamp01(v);
+          return 1 - v * v * v;
+        }
+        // Small deterministic PRNG so the branch keeps its shape across reloads.
+        function seeded(seed) {
+          return function () {
+            seed = (seed + 0x6d2b79f5) | 0;
+            var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+
+        // 0 = calm, 1 = strong gust. Layered sines give long lulls and uneven
+        // gusts; delaying by x / GUST_SPEED makes each gust sweep in from the left.
+        function wind(x, t) {
+          t -= x / GUST_SPEED;
+          var g =
+            0.5 +
+            0.5 *
+              (0.55 * Math.sin(t * 0.23) +
+                0.3 * Math.sin(t * 0.57 + 1.3) +
+                0.15 * Math.sin(t * 1.31 + 2.1));
+          return Math.pow(g, 1.6);
+        }
+
+        // Branch shape in branch units (1 = stem length): twigs alternate along
+        // the stem, each carrying a few leaves.
+        var TWIGS = (function () {
+          var r = seeded(11);
+          var twigs = [];
+          function leaf(v, side) {
+            return {
+              v: v,
+              angle: side * (0.45 + r() * 0.4),
+              len: 0.1 + r() * 0.045,
+              wid: 0.34 + r() * 0.12,
+              phase: r() * TAU,
+              speed: 2.2 + r() * 2.4,
+            };
+          }
+          for (var i = 0; i < 8; i++) {
+            var u = 0.16 + i * 0.105 + r() * 0.03;
+            var side = i % 2 ? 1 : -1;
+            var twig = {
+              u: u,
+              angle: side * (0.5 + r() * 0.4),
+              len: (0.28 + r() * 0.16) * (1 - 0.4 * u),
+              phase: r() * TAU,
+              leaves: [],
+            };
+            var n = 3 + Math.floor(r() * 3);
+            for (var j = 0; j < n; j++) twig.leaves.push(leaf((j + 1) / (n + 1), j % 2 ? 1 : -1));
+            twig.leaves.push(leaf(1, 0));
+            twigs.push(twig);
+          }
+          // Leaves clustered at the stem tip, as a twig of zero angle.
+          twigs.push({ u: 0.9, angle: 0, len: 0.1, phase: r() * TAU, leaves: [leaf(0.5, 1), leaf(0.5, -1), leaf(1, 0)] });
+          return twigs;
+        })();
+
+        function makeMote() {
+          return {
+            x: rand(0, w),
+            y: rand(0, h),
+            r: rand(0.5, 1.5),
+            speed: rand(0.6, 1.4),
+            phase: rand(0, TAU),
+          };
+        }
+        function makeDrop() {
+          var z = Math.random();
+          return {
+            x: rand(-h * 0.45, w),
+            y: rand(0, h),
+            z: 0.2 + 0.8 * z * z, // mostly distant drops, a few close ones
+            seed: Math.random(),
+          };
+        }
+        function resizePool(pool, size, make) {
+          while (pool.length < size) pool.push(make());
+          pool.length = size;
+        }
+
+        function resize() {
+          var dpr = Math.min(window.devicePixelRatio || 1, 2);
+          w = canvas.clientWidth;
+          h = canvas.clientHeight;
+          canvas.width = Math.round(w * dpr);
+          canvas.height = Math.round(h * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.imageSmoothingQuality = "high";
+          buffer.width = blurred.width = Math.max(1, Math.ceil(w * BUFFER_SCALE));
+          buffer.height = blurred.height = Math.max(1, Math.ceil(h * BUFFER_SCALE));
+
+          // The sun and the branch both sit just off the top-left corner.
+          sun.x = -w * 0.08;
+          sun.y = -h * 0.22 - 40;
+          sun.reach = Math.hypot(w - sun.x, h - sun.y);
+          branch.size = Math.min(720, Math.max(300, w * 0.5));
+          branch.x = -branch.size * 0.06;
+          branch.y = -branch.size * 0.12;
+
+          resizePool(motes, Math.round(Math.min(24, (w * h) / 40000)), makeMote);
+          resizePool(drops, Math.round(Math.min(180, (w * h) / 7500)), makeDrop);
+        }
+
+        /* ---------- Light: sunlight, leaf shadows + dust ---------- */
+        function drawSunlight(t, level) {
+          var glow = ctx.createRadialGradient(sun.x, sun.y, 0, sun.x, sun.y, sun.reach * 0.6);
+          // A touch brighter while gusts move the leaves aside.
+          glow.addColorStop(0, "rgba(253,186,116," + (0.15 + 0.03 * wind(0, t)).toFixed(3) + ")");
+          glow.addColorStop(1, "rgba(253,186,116,0)");
+          ctx.globalAlpha = level;
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        function drawLeafShadows(t, scene) {
+          var s = branch.size;
+          // On reveal the branch swings in from the corner.
+          var enter = 1 - easeOut(scene.reveal);
+          var ax = branch.x - s * 0.5 * enter;
+          var ay = branch.y - s * 0.35 * enter;
+          var gust = wind(ax + s * 0.4, t);
+          // Wind from the left lifts the branch and bends it more towards the tip.
+          var sway = branch.angle - 0.3 * enter - 0.06 * (gust - 0.4) + 0.012 * Math.sin(t * 0.8);
+          var bend = -0.14 * (gust - 0.3);
+
+          function stemAt(u) {
+            var a = sway + bend * u * 0.5;
+            return { x: ax + s * u * Math.cos(a), y: ay + s * u * Math.sin(a), a: sway + bend * u };
+          }
+
+          var stem = new Path2D();
+          var twigs = new Path2D();
+          var leaves = new Path2D();
+          stem.moveTo(ax, ay);
+          for (var k = 1; k <= 10; k++) {
+            var p = stemAt(k / 10);
+            stem.lineTo(p.x, p.y);
+          }
+
+          for (var i = 0; i < TWIGS.length; i++) {
+            var tw = TWIGS[i];
+            var base = stemAt(tw.u);
+            var local = wind(base.x, t);
+            var ang =
+              base.a +
+              tw.angle -
+              0.1 * (local - 0.4) +
+              0.035 * (0.4 + local) * Math.sin(t * (1.1 + tw.u) + tw.phase);
+            var dx = Math.cos(ang);
+            var dy = Math.sin(ang);
+            var reach = s * tw.len;
+            twigs.moveTo(base.x, base.y);
+            twigs.lineTo(base.x + dx * reach, base.y + dy * reach);
+
+            for (var j = 0; j < tw.leaves.length; j++) {
+              var lf = tw.leaves[j];
+              var bx = base.x + dx * reach * lf.v;
+              var by = base.y + dy * reach * lf.v;
+              // Leaves flutter faster and turn edge-on as a gust passes.
+              var la = ang + lf.angle + (0.12 + 0.45 * local) * Math.sin(t * lf.speed + lf.phase);
+              var turn = 1 - 0.55 * local * (0.5 + 0.5 * Math.sin(t * lf.speed * 1.3 + lf.phase));
+              var len = s * lf.len;
+              var half = len * lf.wid * 0.5 * turn;
+              var ux = Math.cos(la);
+              var uy = Math.sin(la);
+              var mx = bx + ux * len * 0.5;
+              var my = by + uy * len * 0.5;
+              leaves.moveTo(bx, by);
+              leaves.quadraticCurveTo(mx - uy * half * 2, my + ux * half * 2, bx + ux * len, by + uy * len);
+              leaves.quadraticCurveTo(mx + uy * half * 2, my - ux * half * 2, bx, by);
+            }
+          }
+
+          bctx.setTransform(BUFFER_SCALE, 0, 0, BUFFER_SCALE, 0, 0);
+          bctx.clearRect(0, 0, w, h);
+          bctx.fillStyle = bctx.strokeStyle = "rgb(84,64,44)";
+          bctx.lineCap = "round";
+          bctx.lineWidth = s * 0.014;
+          bctx.stroke(stem);
+          bctx.lineWidth = s * 0.006;
+          bctx.stroke(twigs);
+          bctx.fill(leaves);
+
+          var out = buffer;
+          if (canBlur) {
+            blctx.clearRect(0, 0, blurred.width, blurred.height);
+            blctx.filter = "blur(1.1px)";
+            blctx.drawImage(buffer, 0, 0);
+            blctx.filter = "none";
+            out = blurred;
+          }
+          ctx.globalAlpha = SHADOW_ALPHA * smooth(scene.level);
+          ctx.drawImage(out, 0, 0, w, h);
+        }
+
+        function drawMotes(t, dt, level) {
+          ctx.fillStyle = "rgb(202,138,4)";
+          for (var i = 0; i < motes.length; i++) {
+            var m = motes[i];
+            m.x += (6 + 34 * wind(m.x, t)) * m.speed * dt;
+            m.y += (Math.sin(t * 0.5 * m.speed + m.phase) * 7 - 2) * dt;
+            if (m.x > w + 8) {
+              m.x = -8;
+              m.y = rand(0, h);
+            }
+            if (m.y < -8) m.y = h + 8;
+            else if (m.y > h + 8) m.y = -8;
+
+            // Dust glints near the sun and fades as it drifts out of the light.
+            var warm = clamp01(1 - Math.hypot(m.x - sun.x, m.y - sun.y) / (sun.reach * 0.75));
+            var a = (0.08 + 0.4 * warm * warm) * (0.7 + 0.3 * Math.sin(t * 1.7 * m.speed + m.phase)) * level;
+            if (a < 0.01) continue;
+            ctx.globalAlpha = a;
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.r, 0, TAU);
+            ctx.fill();
+          }
+        }
+
+        /* ---------- Dark: rain + lightning ---------- */
+        function scheduleStrike(t, soon) {
+          if (soon) strike.next = t + rand(2, 3.2);
+          // Storms come in bursts: sometimes a quick follow-up strike, otherwise
+          // a lull that shortens while the wind is gusting.
+          else if (Math.random() < 0.3) strike.next = t + rand(1.4, 3.5);
+          else strike.next = t + rand(7, 18) * (1.25 - 0.5 * wind(0, t));
+        }
+
+        function maybeStrike(t) {
+          if (t < strike.next) return;
+          // The storm hangs upwind and slowly wanders, so flashes light the sky
+          // from the left, rarely from the same spot twice.
+          var drift = 0.5 + 0.5 * Math.sin(t * 0.021);
+          strike.x = w * (0.02 + 0.4 * drift + rand(-0.08, 0.08));
+          var power = Math.random() < 0.3 ? rand(0.55, 0.75) : rand(0.85, 1); // distant vs close
+          var roll = Math.random();
+          var count = roll < 0.35 ? 1 : roll < 0.8 ? 2 : 3;
+          // At most three flickers within ~0.5s, and strikes are ≥1.4s apart:
+          // within WCAG's 3-flashes-per-second limit (and far below its brightness threshold).
+          strike.pulses = [];
+          for (var i = 0, at = t; i < count; i++, at += rand(0.11, 0.24)) {
+            strike.pulses.push({ t0: at, a: power * (i ? rand(0.4, 0.8) : 1), decay: rand(0.08, 0.16) });
+          }
+          scheduleStrike(t, false);
+        }
+
+        function flashAt(t) {
+          var f = 0;
+          for (var i = 0; i < strike.pulses.length; i++) {
+            var p = strike.pulses[i];
+            var e = t - p.t0;
+            if (e < 0) continue;
+            f += e < 0.04 ? (p.a * e) / 0.04 : p.a * Math.exp(-(e - 0.04) / p.decay);
+          }
+          return f;
+        }
+
+        function drawFlash(flash, level) {
+          if (flash < 0.005) return;
+          var cy = -h * 0.15;
+          var glow = ctx.createRadialGradient(strike.x, cy, 0, strike.x, cy, Math.max(w, h) * 1.25);
+          glow.addColorStop(0, "rgba(196,210,255," + (FLASH_PEAK * flash).toFixed(3) + ")");
+          glow.addColorStop(0.5, "rgba(196,210,255," + (FLASH_PEAK * 0.31 * flash).toFixed(3) + ")");
+          glow.addColorStop(1, "rgba(196,210,255,0)");
+          ctx.globalAlpha = level;
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        function drawRain(t, dt, scene, flash) {
+          var level = smooth(scene.level);
+          // Switching to dark mode, the storm front sweeps in from the left.
+          var front = -h * 0.45 + (w + h * 0.45 + 340) * smooth(scene.reveal);
+          var paths = [new Path2D(), new Path2D(), new Path2D()];
+
+          for (var i = 0; i < drops.length; i++) {
+            var d = drops[i];
+            var slant = 0.1 + 0.32 * wind(d.x, t); // radians off vertical
+            var speed = 650 + 650 * d.z;
+            var vx = Math.sin(slant) * speed;
+            var vy = Math.cos(slant) * speed;
+            d.x += vx * dt;
+            d.y += vy * dt;
+            if (d.y > h + 40 || d.x > w + 40) {
+              d.x = rand(-h * 0.45, w);
+              d.y = rand(-50, -10);
+            }
+            if (d.x > front - d.seed * 320) continue;
+
+            var len = (9 + 20 * d.z) / speed;
+            var layer = d.z < 0.45 ? 0 : d.z < 0.75 ? 1 : 2;
+            paths[layer].moveTo(d.x, d.y);
+            paths[layer].lineTo(d.x - vx * len, d.y - vy * len);
+          }
+
+          ctx.globalAlpha = 1;
+          ctx.lineCap = "round";
+          for (var l = 0; l < 3; l++) {
+            var alpha = Math.min(0.6, RAIN_ALPHA[l] * (1 + 1.75 * flash)) * level;
+            ctx.strokeStyle = "rgba(174,196,230," + alpha.toFixed(3) + ")";
+            ctx.lineWidth = RAIN_WIDTH[l];
+            ctx.stroke(paths[l]);
+          }
+        }
+
+        /* ---------- Loop ---------- */
+        function stepScenes(dt) {
+          if (clock < 0.3) return; // let the hero settle in first
+          for (var name in scenes) {
+            var s = scenes[name];
+            if (name === theme) {
+              s.level = Math.min(1, s.level + dt / 0.6);
+              s.reveal = Math.min(1, s.reveal + dt / 1.8);
+            } else {
+              s.level = Math.max(0, s.level - dt / 0.45);
+              if (s.level === 0) s.reveal = 0;
+            }
+          }
+        }
+
+        function render(t, dt) {
+          var light = scenes.light;
+          var dark = scenes.dark;
+          ctx.globalAlpha = 1;
+          ctx.clearRect(0, 0, w, h);
+          if (light.level > 0) {
+            drawSunlight(t, smooth(light.level));
+            drawLeafShadows(t, light);
+            drawMotes(t, dt, smooth(light.level));
+          }
+          if (dark.level > 0) {
+            maybeStrike(t);
+            var flash = flashAt(t);
+            drawFlash(flash, smooth(dark.level));
+            drawRain(t, dt, dark, flash);
+          }
+          ctx.globalAlpha = 1;
+        }
+
+        // Reduced motion: a still frame of dappled sunlight; rain is motion by nature, so skip it.
+        function renderStill() {
+          scenes.light.level = scenes.light.reveal = theme === "light" ? 1 : 0;
+          scenes.dark.level = scenes.dark.reveal = 0;
+          render(0, 0);
+        }
+
+        function frame(now) {
+          raf = 0;
+          if (reduceMotion.matches) return renderStill();
+          var dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
+          last = now;
+          clock += dt;
+          if (canvas.clientWidth !== w || canvas.clientHeight !== h) resize();
+          stepScenes(dt);
+          render(clock, dt);
+          if (!document.hidden) raf = requestAnimationFrame(frame);
+        }
+
+        function start() {
+          if (reduceMotion.matches) return renderStill();
+          if (!raf && !document.hidden) {
+            last = 0;
+            raf = requestAnimationFrame(frame);
+          }
+        }
+
+        new MutationObserver(function () {
+          var next = currentTheme();
+          if (next === theme) return;
+          theme = next;
+          if (theme === "dark") scheduleStrike(clock, true);
+          else strike.next = Infinity;
+          start();
+        }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+
+        window.addEventListener("resize", function () {
+          resize();
+          if (reduceMotion.matches) renderStill();
+        });
+        document.addEventListener("visibilitychange", start);
+        if (reduceMotion.addEventListener) reduceMotion.addEventListener("change", start);
+
+        resize();
+        if (theme === "dark") scheduleStrike(0, true);
+        start();
       })();
     </script>
   </body>
