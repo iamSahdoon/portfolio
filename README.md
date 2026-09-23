@@ -10,7 +10,7 @@ Personal portfolio website showcasing my background, education, technical skills
 
 ## About
 
-I'm a Full-Stack Developer based in Colombo, Sri Lanka, focused on building web applications using technologies such as React, Next.js, Node.js, and Spring Boot.
+I'm a Software Engineer based in Colombo, Sri Lanka, building full-stack web applications and API integrations with React, Next.js, Node.js, and Spring Boot.
 
 The portfolio includes:
 
