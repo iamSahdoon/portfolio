@@ -899,6 +899,43 @@
       }
 
       /* ---------- Ambient weather ---------- */
+      /* --lit (0–1) is set per component by the weather script while
+         lightning flashes: a faint cool rim on top and a wash from above. */
+      :root {
+        --lit: 0;
+      }
+      [data-theme="dark"]
+        :is(
+          .tech-pill,
+          .project-card,
+          .cert-card,
+          .blog-card,
+          .edu-row,
+          .social-pill,
+          .btn-outline,
+          .theme-toggle
+        ) {
+        background-image:
+          linear-gradient(
+            rgba(206, 218, 255, calc(var(--lit) * 0.45)),
+            rgba(206, 218, 255, calc(var(--lit) * 0.45))
+          ),
+          linear-gradient(
+            rgba(196, 210, 255, calc(var(--lit) * 0.1)),
+            rgba(196, 210, 255, 0) 70%
+          );
+        background-size:
+          100% 1px,
+          100% 100%;
+        background-repeat: no-repeat;
+      }
+      [data-theme="dark"] :is(h1, h2, h3) {
+        text-shadow: 0 0 calc(var(--lit) * 14px)
+          rgba(196, 210, 255, calc(var(--lit) * 0.5));
+      }
+      [data-theme="dark"] .avatar {
+        filter: brightness(calc(1 + var(--lit) * 0.18));
+      }
       #sky {
         position: fixed;
         inset: 0;
@@ -2206,11 +2243,130 @@
           ctx.fillRect(0, 0, w, h);
         }
 
+        // Lightning catches the page itself: each component gets a --lit value
+        // that is strongest near the top of the screen (the flash comes from
+        // above) and a little stronger on the side the strike is on.
+        var litEls = Array.prototype.slice.call(
+          document.querySelectorAll(
+            "section, .tech-pill, .project-card, .cert-card, .blog-card, .edu-row, .social-pill, .btn-outline, .theme-toggle, .avatar",
+          ),
+        );
+        var litOn = false;
+        // The page holds the light a little longer than the sky does: the glow
+        // jumps up with each flicker, then fades out over about half a second.
+        var afterglow = 0;
+        var AFTERGLOW_FADE = 0.75; // seconds (time constant)
+
+        function lightComponents(flash) {
+          var i;
+          if (flash < 0.005) {
+            if (litOn) {
+              for (i = 0; i < litEls.length; i++) litEls[i].style.removeProperty("--lit");
+              litOn = false;
+            }
+            return;
+          }
+          litOn = true;
+          // Read every rect before writing, so layout is computed only once.
+          var rects = litEls.map(function (el) {
+            return el.getBoundingClientRect();
+          });
+          for (i = 0; i < litEls.length; i++) {
+            var r = rects[i];
+            var lit = 0;
+            if (r.bottom > 0 && r.top < h) {
+              var fromTop = 1 - clamp01(Math.max(r.top, 0) / h);
+              var side = Math.min(1, Math.abs(r.left + r.width / 2 - strike.x) / w);
+              lit = flash * (0.25 + 0.75 * fromTop * fromTop) * (1 - 0.25 * side);
+            }
+            litEls[i].style.setProperty("--lit", lit.toFixed(3));
+          }
+        }
+
+        // Rain lands on the page: near drops that cross the top edge of a card,
+        // pill, button or section divider throw up a couple of tiny droplets.
+        // The canvas sits behind the content, so only the part of the splash
+        // that bounces above the edge shows, as if it landed on the component.
+        var surfaceEls = Array.prototype.slice.call(
+          document.querySelectorAll(
+            ".tech-pill, .project-card, .cert-card, .blog-card, .edu-row, .social-pill, .btn, .theme-toggle, section + section",
+          ),
+        );
+        var surfaces = [];
+        var surfacesAt = -1;
+        var splashes = [];
+        window.addEventListener(
+          "scroll",
+          function () {
+            surfacesAt = -1;
+          },
+          { passive: true },
+        );
+
+        function refreshSurfaces(t) {
+          // Re-measure on scroll/resize, and twice a second for layout shifts.
+          if (surfacesAt >= 0 && t - surfacesAt < 0.5) return;
+          surfacesAt = t;
+          surfaces.length = 0;
+          for (var i = 0; i < surfaceEls.length; i++) {
+            var r = surfaceEls[i].getBoundingClientRect();
+            if (r.top > 0 && r.top < h && r.width > 12) {
+              surfaces.push({ top: r.top, left: r.left + 6, right: r.right - 6 });
+            }
+          }
+        }
+
+        function landOn(px, py, d, vx, vy) {
+          for (var k = 0; k < surfaces.length; k++) {
+            var sf = surfaces[k];
+            if (py < sf.top && d.y >= sf.top) {
+              var x = px + (vx * (sf.top - py)) / vy; // where it crossed the edge
+              if (x > sf.left && x < sf.right) {
+                if (Math.random() < 0.5) splash(x, sf.top, vx, d.z);
+                return;
+              }
+            }
+          }
+        }
+
+        function splash(x, y, vx, z) {
+          var n = Math.random() < 0.4 ? 3 : 2;
+          for (var i = 0; i < n && splashes.length < 220; i++) {
+            splashes.push({
+              x: x,
+              y: y - 0.5,
+              vx: vx * 0.15 + rand(-70, 70),
+              vy: -rand(50, 150) * (0.6 + 0.4 * z),
+              life: 0,
+              ttl: rand(0.22, 0.38),
+            });
+          }
+        }
+
+        function drawSplashes(dt, level, flash) {
+          ctx.fillStyle = "rgb(190,208,236)";
+          for (var i = splashes.length - 1; i >= 0; i--) {
+            var p = splashes[i];
+            p.life += dt;
+            if (p.life >= p.ttl) {
+              splashes[i] = splashes[splashes.length - 1];
+              splashes.pop();
+              continue;
+            }
+            p.vy += 900 * dt; // gravity pulls the droplet back onto the edge
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            ctx.globalAlpha = Math.min(1, 0.38 * (1 - p.life / p.ttl) * (1 + 0.8 * flash)) * level;
+            ctx.fillRect(p.x - 0.6, p.y - 0.6, 1.2, 1.2);
+          }
+        }
+
         function drawRain(t, dt, scene, flash) {
           var level = smooth(scene.level);
           // Switching to dark mode, the storm front sweeps in from the left.
           var front = -h * 0.6 + (w + h * 0.6 + 340) * smooth(scene.reveal);
           var paths = [new Path2D(), new Path2D(), new Path2D()];
+          refreshSurfaces(t);
 
           for (var i = 0; i < drops.length; i++) {
             var d = drops[i];
@@ -2219,15 +2375,18 @@
             var speed = 1150 + 950 * d.z;
             var vx = Math.sin(slant) * speed;
             var vy = Math.cos(slant) * speed;
+            var px = d.x;
+            var py = d.y;
             d.x += vx * dt;
             d.y += vy * dt;
+            var shown = d.x <= front - d.seed * 320 && d.heavy <= 0.6 + 0.4 * gust;
+            if (shown && d.z > 0.5 && dt > 0) landOn(px, py, d, vx, vy);
             if (d.y > h + 40 || d.x > w + 40) {
               d.x = rand(-h * 0.6, w);
               d.y = rand(-50, -10);
             }
-            if (d.x > front - d.seed * 320) continue;
             // Thunderstorm rain comes in surges: gusts bring a heavier downpour.
-            if (d.heavy > 0.6 + 0.4 * gust) continue;
+            if (!shown) continue;
 
             var len = (12.8 + 24 * d.z) / speed; // faster drops streak longer
             var layer = d.z < 0.45 ? 0 : d.z < 0.75 ? 1 : 2;
@@ -2243,6 +2402,7 @@
             ctx.lineWidth = RAIN_WIDTH[l];
             ctx.stroke(paths[l]);
           }
+          drawSplashes(dt, level, flash);
         }
 
         /* ---------- Loop ---------- */
@@ -2270,10 +2430,17 @@
             drawLeafShadows(t, light);
             drawMotes(t, dt, smooth(light.level));
           }
+          if (dark.level === 0) {
+            afterglow = 0;
+            splashes.length = 0;
+            lightComponents(0);
+          }
           if (dark.level > 0) {
             maybeStrike(t);
             var flash = flashAt(t);
             drawFlash(flash, smooth(dark.level));
+            afterglow = Math.max(flash, afterglow * Math.exp(-dt / AFTERGLOW_FADE));
+            lightComponents(afterglow * smooth(dark.level));
             drawRain(t, dt, dark, flash);
           }
           ctx.globalAlpha = 1;
