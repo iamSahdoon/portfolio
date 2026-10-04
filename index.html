@@ -2229,7 +2229,7 @@
             // Thunderstorm rain comes in surges: gusts bring a heavier downpour.
             if (d.heavy > 0.6 + 0.4 * gust) continue;
 
-            var len = (16 + 30 * d.z) / speed; // faster drops streak longer
+            var len = (12.8 + 24 * d.z) / speed; // faster drops streak longer
             var layer = d.z < 0.45 ? 0 : d.z < 0.75 ? 1 : 2;
             paths[layer].moveTo(d.x, d.y);
             paths[layer].lineTo(d.x - vx * len, d.y - vy * len);
