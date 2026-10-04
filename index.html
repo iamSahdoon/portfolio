@@ -1898,7 +1898,7 @@
         var GUST_SPEED = 520; // px/s a gust front travels across the page
         var BUFFER_SCALE = 0.25;
         var SHADOW_ALPHA = 0.085;
-        var RAIN_ALPHA = [0.08, 0.13, 0.2];
+        var RAIN_ALPHA = [0.07, 0.12, 0.19];
         var RAIN_WIDTH = [0.7, 0.9, 1.2];
         var FLASH_PEAK = 0.14;
 
@@ -2005,10 +2005,11 @@
         function makeDrop() {
           var z = Math.random();
           return {
-            x: rand(-h * 0.45, w),
+            x: rand(-h * 0.6, w),
             y: rand(0, h),
             z: 0.2 + 0.8 * z * z, // mostly distant drops, a few close ones
             seed: Math.random(),
+            heavy: Math.random(), // drawn only while the storm surges
           };
         }
         function resizePool(pool, size, make) {
@@ -2036,7 +2037,7 @@
           branch.y = -branch.size * 0.12;
 
           resizePool(motes, Math.round(Math.min(24, (w * h) / 40000)), makeMote);
-          resizePool(drops, Math.round(Math.min(180, (w * h) / 7500)), makeDrop);
+          resizePool(drops, Math.round(Math.min(340, (w * h) / 4000)), makeDrop);
         }
 
         /* ---------- Light: sunlight, leaf shadows + dust ---------- */
@@ -2208,24 +2209,27 @@
         function drawRain(t, dt, scene, flash) {
           var level = smooth(scene.level);
           // Switching to dark mode, the storm front sweeps in from the left.
-          var front = -h * 0.45 + (w + h * 0.45 + 340) * smooth(scene.reveal);
+          var front = -h * 0.6 + (w + h * 0.6 + 340) * smooth(scene.reveal);
           var paths = [new Path2D(), new Path2D(), new Path2D()];
 
           for (var i = 0; i < drops.length; i++) {
             var d = drops[i];
-            var slant = 0.1 + 0.32 * wind(d.x, t); // radians off vertical
-            var speed = 650 + 650 * d.z;
+            var gust = wind(d.x, t);
+            var slant = 0.12 + 0.4 * gust; // radians off vertical
+            var speed = 1150 + 950 * d.z;
             var vx = Math.sin(slant) * speed;
             var vy = Math.cos(slant) * speed;
             d.x += vx * dt;
             d.y += vy * dt;
             if (d.y > h + 40 || d.x > w + 40) {
-              d.x = rand(-h * 0.45, w);
+              d.x = rand(-h * 0.6, w);
               d.y = rand(-50, -10);
             }
             if (d.x > front - d.seed * 320) continue;
+            // Thunderstorm rain comes in surges: gusts bring a heavier downpour.
+            if (d.heavy > 0.6 + 0.4 * gust) continue;
 
-            var len = (9 + 20 * d.z) / speed;
+            var len = (16 + 30 * d.z) / speed; // faster drops streak longer
             var layer = d.z < 0.45 ? 0 : d.z < 0.75 ? 1 : 2;
             paths[layer].moveTo(d.x, d.y);
             paths[layer].lineTo(d.x - vx * len, d.y - vy * len);
