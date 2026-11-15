@@ -1309,9 +1309,9 @@
             </li>
           </ul>
           <div class="tag-row">
-            <span class="tag">Next.js</span><span class="tag">Microservices</span
-            ><span class="tag">n8n</span><span class="tag">Claude Code</span
-            ><span class="tag">Cursor</span>
+            <span class="tag">Next.js</span
+            ><span class="tag">Microservices</span><span class="tag">n8n</span
+            ><span class="tag">Claude Code</span><span class="tag">Cursor</span>
           </div>
         </div>
 
@@ -1342,8 +1342,7 @@
             <li>
               Configured and tested OAuth 2.0 consent flows on WSO2 Identity
               Server within the toolkit's security layer, validating
-              authorisation and consent behaviour across connector
-              integrations.
+              authorisation and consent behaviour across connector integrations.
             </li>
           </ul>
           <div class="tag-row">
@@ -1470,13 +1469,55 @@
               <span class="status status-live">Live</span>
             </div>
             <p class="project-desc">
-              Daily updates build the weekly report; managers review and
-              approve it from one dashboard.
+              Daily updates build the weekly report; managers review and approve
+              it from one dashboard.
             </p>
             <div class="tag-row">
-              <span class="tag">MERN</span><span class="tag">TanStack Query</span
+              <span class="tag">MERN</span
+              ><span class="tag">TanStack Query</span
               ><span class="tag">Tailwind CSS</span><span class="tag">Zod</span
               ><span class="tag">Vitest</span><span class="tag">Vercel</span>
+            </div>
+          </a>
+
+          <a
+            class="project-card"
+            href="https://pearl-pdf-theta.vercel.app/"
+            target="_blank"
+            rel="noopener"
+          >
+            <div
+              class="project-icon"
+              style="background: #fce7f3; color: #be185d"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M8 3h7l4 4v11a2 2 0 01-2 2H8a2 2 0 01-2-2V5a2 2 0 012-2z"
+                />
+                <path d="M15 3v4h4" />
+                <path d="M4 7v12a2 2 0 002 2h9" />
+              </svg>
+            </div>
+            <div class="project-title-row">
+              <h3 class="project-title">Pearl PDF</h3>
+              <span class="status status-live">Live</span>
+            </div>
+            <p class="project-desc">
+              Privacy-first PDF page editor: reorder, rotate, remove and merge
+              pages entirely in the browser, with no uploads on the server.
+            </p>
+            <div class="tag-row">
+              <span class="tag">pdf-lib</span><span class="tag">pdf.js</span
+              ><span class="tag">Web Workers</span><span class="tag">CSP</span
+              ><span class="tag">Accessibility</span
+              ><span class="tag">Vercel</span>
             </div>
           </a>
 
@@ -1962,7 +2003,9 @@
         if (!ctx) return;
 
         var root = document.documentElement;
-        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        var reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        );
         // Leaf shadows are drawn small, blurred, then scaled up: cheap and soft.
         var buffer = document.createElement("canvas");
         var bctx = buffer.getContext("2d");
@@ -2060,12 +2103,19 @@
               leaves: [],
             };
             var n = 3 + Math.floor(r() * 3);
-            for (var j = 0; j < n; j++) twig.leaves.push(leaf((j + 1) / (n + 1), j % 2 ? 1 : -1));
+            for (var j = 0; j < n; j++)
+              twig.leaves.push(leaf((j + 1) / (n + 1), j % 2 ? 1 : -1));
             twig.leaves.push(leaf(1, 0));
             twigs.push(twig);
           }
           // Leaves clustered at the stem tip, as a twig of zero angle.
-          twigs.push({ u: 0.9, angle: 0, len: 0.1, phase: r() * TAU, leaves: [leaf(0.5, 1), leaf(0.5, -1), leaf(1, 0)] });
+          twigs.push({
+            u: 0.9,
+            angle: 0,
+            len: 0.1,
+            phase: r() * TAU,
+            leaves: [leaf(0.5, 1), leaf(0.5, -1), leaf(1, 0)],
+          });
           return twigs;
         })();
 
@@ -2101,8 +2151,14 @@
           canvas.height = Math.round(h * dpr);
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           ctx.imageSmoothingQuality = "high";
-          buffer.width = blurred.width = Math.max(1, Math.ceil(w * BUFFER_SCALE));
-          buffer.height = blurred.height = Math.max(1, Math.ceil(h * BUFFER_SCALE));
+          buffer.width = blurred.width = Math.max(
+            1,
+            Math.ceil(w * BUFFER_SCALE),
+          );
+          buffer.height = blurred.height = Math.max(
+            1,
+            Math.ceil(h * BUFFER_SCALE),
+          );
 
           // The sun and the branch both sit just off the top-left corner.
           sun.x = -w * 0.08;
@@ -2112,15 +2168,33 @@
           branch.x = -branch.size * 0.06;
           branch.y = -branch.size * 0.12;
 
-          resizePool(motes, Math.round(Math.min(24, (w * h) / 40000)), makeMote);
-          resizePool(drops, Math.round(Math.min(340, (w * h) / 4000)), makeDrop);
+          resizePool(
+            motes,
+            Math.round(Math.min(24, (w * h) / 40000)),
+            makeMote,
+          );
+          resizePool(
+            drops,
+            Math.round(Math.min(340, (w * h) / 4000)),
+            makeDrop,
+          );
         }
 
         /* ---------- Light: sunlight, leaf shadows + dust ---------- */
         function drawSunlight(t, level) {
-          var glow = ctx.createRadialGradient(sun.x, sun.y, 0, sun.x, sun.y, sun.reach * 0.6);
+          var glow = ctx.createRadialGradient(
+            sun.x,
+            sun.y,
+            0,
+            sun.x,
+            sun.y,
+            sun.reach * 0.6,
+          );
           // A touch brighter while gusts move the leaves aside.
-          glow.addColorStop(0, "rgba(253,186,116," + (0.15 + 0.03 * wind(0, t)).toFixed(3) + ")");
+          glow.addColorStop(
+            0,
+            "rgba(253,186,116," + (0.15 + 0.03 * wind(0, t)).toFixed(3) + ")",
+          );
           glow.addColorStop(1, "rgba(253,186,116,0)");
           ctx.globalAlpha = level;
           ctx.fillStyle = glow;
@@ -2135,12 +2209,20 @@
           var ay = branch.y - s * 0.35 * enter;
           var gust = wind(ax + s * 0.4, t);
           // Wind from the left lifts the branch and bends it more towards the tip.
-          var sway = branch.angle - 0.3 * enter - 0.06 * (gust - 0.4) + 0.012 * Math.sin(t * 0.8);
+          var sway =
+            branch.angle -
+            0.3 * enter -
+            0.06 * (gust - 0.4) +
+            0.012 * Math.sin(t * 0.8);
           var bend = -0.14 * (gust - 0.3);
 
           function stemAt(u) {
             var a = sway + bend * u * 0.5;
-            return { x: ax + s * u * Math.cos(a), y: ay + s * u * Math.sin(a), a: sway + bend * u };
+            return {
+              x: ax + s * u * Math.cos(a),
+              y: ay + s * u * Math.sin(a),
+              a: sway + bend * u,
+            };
           }
 
           var stem = new Path2D();
@@ -2172,8 +2254,15 @@
               var bx = base.x + dx * reach * lf.v;
               var by = base.y + dy * reach * lf.v;
               // Leaves flutter faster and turn edge-on as a gust passes.
-              var la = ang + lf.angle + (0.12 + 0.45 * local) * Math.sin(t * lf.speed + lf.phase);
-              var turn = 1 - 0.55 * local * (0.5 + 0.5 * Math.sin(t * lf.speed * 1.3 + lf.phase));
+              var la =
+                ang +
+                lf.angle +
+                (0.12 + 0.45 * local) * Math.sin(t * lf.speed + lf.phase);
+              var turn =
+                1 -
+                0.55 *
+                  local *
+                  (0.5 + 0.5 * Math.sin(t * lf.speed * 1.3 + lf.phase));
               var len = s * lf.len;
               var half = len * lf.wid * 0.5 * turn;
               var ux = Math.cos(la);
@@ -2181,8 +2270,18 @@
               var mx = bx + ux * len * 0.5;
               var my = by + uy * len * 0.5;
               leaves.moveTo(bx, by);
-              leaves.quadraticCurveTo(mx - uy * half * 2, my + ux * half * 2, bx + ux * len, by + uy * len);
-              leaves.quadraticCurveTo(mx + uy * half * 2, my - ux * half * 2, bx, by);
+              leaves.quadraticCurveTo(
+                mx - uy * half * 2,
+                my + ux * half * 2,
+                bx + ux * len,
+                by + uy * len,
+              );
+              leaves.quadraticCurveTo(
+                mx + uy * half * 2,
+                my - ux * half * 2,
+                bx,
+                by,
+              );
             }
           }
 
@@ -2222,8 +2321,13 @@
             else if (m.y > h + 8) m.y = -8;
 
             // Dust glints near the sun and fades as it drifts out of the light.
-            var warm = clamp01(1 - Math.hypot(m.x - sun.x, m.y - sun.y) / (sun.reach * 0.75));
-            var a = (0.08 + 0.4 * warm * warm) * (0.7 + 0.3 * Math.sin(t * 1.7 * m.speed + m.phase)) * level;
+            var warm = clamp01(
+              1 - Math.hypot(m.x - sun.x, m.y - sun.y) / (sun.reach * 0.75),
+            );
+            var a =
+              (0.08 + 0.4 * warm * warm) *
+              (0.7 + 0.3 * Math.sin(t * 1.7 * m.speed + m.phase)) *
+              level;
             if (a < 0.01) continue;
             ctx.globalAlpha = a;
             ctx.beginPath();
@@ -2254,7 +2358,11 @@
           // within WCAG's 3-flashes-per-second limit (and far below its brightness threshold).
           strike.pulses = [];
           for (var i = 0, at = t; i < count; i++, at += rand(0.11, 0.24)) {
-            strike.pulses.push({ t0: at, a: power * (i ? rand(0.4, 0.8) : 1), decay: rand(0.08, 0.16) });
+            strike.pulses.push({
+              t0: at,
+              a: power * (i ? rand(0.4, 0.8) : 1),
+              decay: rand(0.08, 0.16),
+            });
           }
           scheduleStrike(t, false);
         }
@@ -2265,7 +2373,10 @@
             var p = strike.pulses[i];
             var e = t - p.t0;
             if (e < 0) continue;
-            f += e < 0.04 ? (p.a * e) / 0.04 : p.a * Math.exp(-(e - 0.04) / p.decay);
+            f +=
+              e < 0.04
+                ? (p.a * e) / 0.04
+                : p.a * Math.exp(-(e - 0.04) / p.decay);
           }
           return f;
         }
@@ -2273,9 +2384,22 @@
         function drawFlash(flash, level) {
           if (flash < 0.005) return;
           var cy = -h * 0.15;
-          var glow = ctx.createRadialGradient(strike.x, cy, 0, strike.x, cy, Math.max(w, h) * 1.25);
-          glow.addColorStop(0, "rgba(196,210,255," + (FLASH_PEAK * flash).toFixed(3) + ")");
-          glow.addColorStop(0.5, "rgba(196,210,255," + (FLASH_PEAK * 0.31 * flash).toFixed(3) + ")");
+          var glow = ctx.createRadialGradient(
+            strike.x,
+            cy,
+            0,
+            strike.x,
+            cy,
+            Math.max(w, h) * 1.25,
+          );
+          glow.addColorStop(
+            0,
+            "rgba(196,210,255," + (FLASH_PEAK * flash).toFixed(3) + ")",
+          );
+          glow.addColorStop(
+            0.5,
+            "rgba(196,210,255," + (FLASH_PEAK * 0.31 * flash).toFixed(3) + ")",
+          );
           glow.addColorStop(1, "rgba(196,210,255,0)");
           ctx.globalAlpha = level;
           ctx.fillStyle = glow;
@@ -2300,7 +2424,8 @@
           var i;
           if (flash < 0.005) {
             if (litOn) {
-              for (i = 0; i < litEls.length; i++) litEls[i].style.removeProperty("--lit");
+              for (i = 0; i < litEls.length; i++)
+                litEls[i].style.removeProperty("--lit");
               litOn = false;
             }
             return;
@@ -2315,8 +2440,12 @@
             var lit = 0;
             if (r.bottom > 0 && r.top < h) {
               var fromTop = 1 - clamp01(Math.max(r.top, 0) / h);
-              var side = Math.min(1, Math.abs(r.left + r.width / 2 - strike.x) / w);
-              lit = flash * (0.25 + 0.75 * fromTop * fromTop) * (1 - 0.25 * side);
+              var side = Math.min(
+                1,
+                Math.abs(r.left + r.width / 2 - strike.x) / w,
+              );
+              lit =
+                flash * (0.25 + 0.75 * fromTop * fromTop) * (1 - 0.25 * side);
             }
             litEls[i].style.setProperty("--lit", lit.toFixed(3));
           }
@@ -2350,7 +2479,11 @@
           for (var i = 0; i < surfaceEls.length; i++) {
             var r = surfaceEls[i].getBoundingClientRect();
             if (r.top > 0 && r.top < h && r.width > 12) {
-              surfaces.push({ top: r.top, left: r.left + 6, right: r.right - 6 });
+              surfaces.push({
+                top: r.top,
+                left: r.left + 6,
+                right: r.right - 6,
+              });
             }
           }
         }
@@ -2395,7 +2528,9 @@
             p.vy += 900 * dt; // gravity pulls the droplet back onto the edge
             p.x += p.vx * dt;
             p.y += p.vy * dt;
-            ctx.globalAlpha = Math.min(1, 0.38 * (1 - p.life / p.ttl) * (1 + 0.8 * flash)) * level;
+            ctx.globalAlpha =
+              Math.min(1, 0.38 * (1 - p.life / p.ttl) * (1 + 0.8 * flash)) *
+              level;
             ctx.fillRect(p.x - 0.6, p.y - 0.6, 1.2, 1.2);
           }
         }
@@ -2418,7 +2553,8 @@
             var py = d.y;
             d.x += vx * dt;
             d.y += vy * dt;
-            var shown = d.x <= front - d.seed * 320 && d.heavy <= 0.6 + 0.4 * gust;
+            var shown =
+              d.x <= front - d.seed * 320 && d.heavy <= 0.6 + 0.4 * gust;
             if (shown && d.z > 0.5 && dt > 0) landOn(px, py, d, vx, vy);
             if (d.y > h + 40 || d.x > w + 40) {
               d.x = rand(-h * 0.6, w);
@@ -2436,7 +2572,8 @@
           ctx.globalAlpha = 1;
           ctx.lineCap = "round";
           for (var l = 0; l < 3; l++) {
-            var alpha = Math.min(0.6, RAIN_ALPHA[l] * (1 + 1.75 * flash)) * level;
+            var alpha =
+              Math.min(0.6, RAIN_ALPHA[l] * (1 + 1.75 * flash)) * level;
             ctx.strokeStyle = "rgba(174,196,230," + alpha.toFixed(3) + ")";
             ctx.lineWidth = RAIN_WIDTH[l];
             ctx.stroke(paths[l]);
@@ -2478,7 +2615,10 @@
             maybeStrike(t);
             var flash = flashAt(t);
             drawFlash(flash, smooth(dark.level));
-            afterglow = Math.max(flash, afterglow * Math.exp(-dt / AFTERGLOW_FADE));
+            afterglow = Math.max(
+              flash,
+              afterglow * Math.exp(-dt / AFTERGLOW_FADE),
+            );
             lightComponents(afterglow * smooth(dark.level));
             drawRain(t, dt, dark, flash);
           }
@@ -2526,7 +2666,8 @@
           if (reduceMotion.matches) renderStill();
         });
         document.addEventListener("visibilitychange", start);
-        if (reduceMotion.addEventListener) reduceMotion.addEventListener("change", start);
+        if (reduceMotion.addEventListener)
+          reduceMotion.addEventListener("change", start);
 
         resize();
         if (theme === "dark") scheduleStrike(0, true);
